@@ -18,6 +18,7 @@
 		7D7D5F3C1C12537400ADBB79 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D7D5F3A1C12537400ADBB79 /* LaunchScreen.storyboard */; };
 		7D7D5F471C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F461C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m */; };
 		7D7D5F521C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F511C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m */; };
+		7D7D5F671C15984500ADBB79 /* XTDAWCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */; };
 		EFCE64FAE63C8650B5BADD9F /* libPods-XTDiscountAsciiWarehouse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF94377D39B7C28060ED7913 /* libPods-XTDiscountAsciiWarehouse.a */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,8 @@
 		7D7D5F511C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XTDiscountAsciiWarehouseUITests.m; sourceTree = "<group>"; };
 		7D7D5F531C12537400ADBB79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D7D5F5F1C1254B000ADBB79 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
+		7D7D5F651C15984500ADBB79 /* XTDAWCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTDAWCoreData.h; sourceTree = "<group>"; };
+		7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTDAWCoreData.m; sourceTree = "<group>"; };
 		8E514B055FC4CD09229F4F12 /* Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XTDiscountAsciiWarehouseUITests/Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		A5FCFE7B97D4C59BB6876AAB /* Pods-XTDiscountAsciiWarehouse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XTDiscountAsciiWarehouse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XTDiscountAsciiWarehouse/Pods-XTDiscountAsciiWarehouse.debug.xcconfig"; sourceTree = "<group>"; };
 		AF94377D39B7C28060ED7913 /* libPods-XTDiscountAsciiWarehouse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-XTDiscountAsciiWarehouse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,15 +137,13 @@
 		7D7D5F281C12537400ADBB79 /* XTDiscountAsciiWarehouse */ = {
 			isa = PBXGroup;
 			children = (
+				7D7D5F6A1C159AFB00ADBB79 /* UserInterface */,
+				7D7D5F691C159AE600ADBB79 /* ViewControllers */,
+				7D7D5F681C159ACE00ADBB79 /* CoreData */,
 				7D7D5F2C1C12537400ADBB79 /* AppDelegate.h */,
 				7D7D5F2D1C12537400ADBB79 /* AppDelegate.m */,
-				7D7D5F2F1C12537400ADBB79 /* ViewController.h */,
-				7D7D5F301C12537400ADBB79 /* ViewController.m */,
-				7D7D5F321C12537400ADBB79 /* Main.storyboard */,
 				7D7D5F381C12537400ADBB79 /* Assets.xcassets */,
-				7D7D5F3A1C12537400ADBB79 /* LaunchScreen.storyboard */,
 				7D7D5F3D1C12537400ADBB79 /* Info.plist */,
-				7D7D5F351C12537400ADBB79 /* XTDiscountAsciiWarehouse.xcdatamodeld */,
 				7D7D5F291C12537400ADBB79 /* Supporting Files */,
 			);
 			path = XTDiscountAsciiWarehouse;
@@ -173,6 +174,34 @@
 				7D7D5F531C12537400ADBB79 /* Info.plist */,
 			);
 			path = XTDiscountAsciiWarehouseUITests;
+			sourceTree = "<group>";
+		};
+		7D7D5F681C159ACE00ADBB79 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				7D7D5F351C12537400ADBB79 /* XTDiscountAsciiWarehouse.xcdatamodeld */,
+				7D7D5F651C15984500ADBB79 /* XTDAWCoreData.h */,
+				7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		7D7D5F691C159AE600ADBB79 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				7D7D5F2F1C12537400ADBB79 /* ViewController.h */,
+				7D7D5F301C12537400ADBB79 /* ViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		7D7D5F6A1C159AFB00ADBB79 /* UserInterface */ = {
+			isa = PBXGroup;
+			children = (
+				7D7D5F321C12537400ADBB79 /* Main.storyboard */,
+				7D7D5F3A1C12537400ADBB79 /* LaunchScreen.storyboard */,
+			);
+			name = UserInterface;
 			sourceTree = "<group>";
 		};
 		F00C96B39B4BF02BA16DEB86 /* Frameworks */ = {
@@ -446,6 +475,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D7D5F671C15984500ADBB79 /* XTDAWCoreData.m in Sources */,
 				7D7D5F311C12537400ADBB79 /* ViewController.m in Sources */,
 				7D7D5F2E1C12537400ADBB79 /* AppDelegate.m in Sources */,
 				7D7D5F371C12537400ADBB79 /* XTDiscountAsciiWarehouse.xcdatamodeld in Sources */,

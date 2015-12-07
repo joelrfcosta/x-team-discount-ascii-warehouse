@@ -20,6 +20,12 @@
     static const DDLogLevel ddLogLevel = DDLogLevelError;
 #endif
 
+#define SingletonWithBlock(block)   static dispatch_once_t pred = 0; \
+__strong static id _sharedObject = nil; \
+dispatch_once(&pred, ^{ \
+_sharedObject = block(); \
+}); \
+return _sharedObject; \
 
 
 #endif /* Prefix_pch */
