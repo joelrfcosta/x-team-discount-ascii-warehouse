@@ -1,5 +1,9 @@
 #import "_XTTag.h"
 
 @interface XTTag : _XTTag {}
-// Custom logic goes here.
+
++ (nullable XTTag *)itemWithName:(nullable NSString *)name managedObjectContext:(nullable NSManagedObjectContext *)context;
+
+- (nullable XTTag *)initWithName:(nullable NSString *)name managedObjectContext:(nullable NSManagedObjectContext *)context;
+
 @end
