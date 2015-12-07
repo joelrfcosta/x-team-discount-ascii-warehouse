@@ -5,13 +5,16 @@ platform :ios, '9.0'
 
 target 'XTDiscountAsciiWarehouse' do
 	pod 'CocoaLumberjack'
+    pod 'AFNetworking'
 end
 
 target 'XTDiscountAsciiWarehouseTests' do
 	pod 'CocoaLumberjack'
+    pod 'AFNetworking'
 end
 
 target 'XTDiscountAsciiWarehouseUITests' do
 	pod 'CocoaLumberjack'
+    pod 'AFNetworking'
 end
 

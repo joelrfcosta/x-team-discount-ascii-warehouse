@@ -18,11 +18,14 @@
 		7D7D5F3C1C12537400ADBB79 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D7D5F3A1C12537400ADBB79 /* LaunchScreen.storyboard */; };
 		7D7D5F471C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F461C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m */; };
 		7D7D5F521C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F511C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m */; };
-		7D7D5F671C15984500ADBB79 /* XTDAWCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */; };
+		7D7D5F671C15984500ADBB79 /* XTCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F661C15984500ADBB79 /* XTCoreData.m */; };
 		7D7D5F7F1C159E7F00ADBB79 /* _XTItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F781C159E7F00ADBB79 /* _XTItem.m */; };
 		7D7D5F801C159E7F00ADBB79 /* _XTTag.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F7A1C159E7F00ADBB79 /* _XTTag.m */; };
 		7D7D5F811C159E7F00ADBB79 /* XTItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F7C1C159E7F00ADBB79 /* XTItem.m */; };
 		7D7D5F821C159E7F00ADBB79 /* XTTag.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F7E1C159E7F00ADBB79 /* XTTag.m */; };
+		7D7D5F871C15A01D00ADBB79 /* XTCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */; };
+		7D7D5F881C15A01D00ADBB79 /* XTCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */; };
+		7D7D5F891C15A01D00ADBB79 /* XTCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */; };
 		EFCE64FAE63C8650B5BADD9F /* libPods-XTDiscountAsciiWarehouse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF94377D39B7C28060ED7913 /* libPods-XTDiscountAsciiWarehouse.a */; };
 /* End PBXBuildFile section */
 
@@ -67,8 +70,8 @@
 		7D7D5F511C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XTDiscountAsciiWarehouseUITests.m; sourceTree = "<group>"; };
 		7D7D5F531C12537400ADBB79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D7D5F5F1C1254B000ADBB79 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		7D7D5F651C15984500ADBB79 /* XTDAWCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XTDAWCoreData.h; path = ../XTDAWCoreData.h; sourceTree = "<group>"; };
-		7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XTDAWCoreData.m; path = ../XTDAWCoreData.m; sourceTree = "<group>"; };
+		7D7D5F651C15984500ADBB79 /* XTCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XTCoreData.h; path = ../XTCoreData.h; sourceTree = "<group>"; };
+		7D7D5F661C15984500ADBB79 /* XTCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XTCoreData.m; path = ../XTCoreData.m; sourceTree = "<group>"; };
 		7D7D5F771C159E7F00ADBB79 /* _XTItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _XTItem.h; sourceTree = "<group>"; };
 		7D7D5F781C159E7F00ADBB79 /* _XTItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _XTItem.m; sourceTree = "<group>"; };
 		7D7D5F791C159E7F00ADBB79 /* _XTTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _XTTag.h; sourceTree = "<group>"; };
@@ -77,6 +80,8 @@
 		7D7D5F7C1C159E7F00ADBB79 /* XTItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTItem.m; sourceTree = "<group>"; };
 		7D7D5F7D1C159E7F00ADBB79 /* XTTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTag.h; sourceTree = "<group>"; };
 		7D7D5F7E1C159E7F00ADBB79 /* XTTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTag.m; sourceTree = "<group>"; };
+		7D7D5F851C15A01D00ADBB79 /* XTCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTCommunication.h; sourceTree = "<group>"; };
+		7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTCommunication.m; sourceTree = "<group>"; };
 		8E514B055FC4CD09229F4F12 /* Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XTDiscountAsciiWarehouseUITests/Pods-XTDiscountAsciiWarehouseUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		A5FCFE7B97D4C59BB6876AAB /* Pods-XTDiscountAsciiWarehouse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XTDiscountAsciiWarehouse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XTDiscountAsciiWarehouse/Pods-XTDiscountAsciiWarehouse.debug.xcconfig"; sourceTree = "<group>"; };
 		AF94377D39B7C28060ED7913 /* libPods-XTDiscountAsciiWarehouse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-XTDiscountAsciiWarehouse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +162,8 @@
 				7D7D5F381C12537400ADBB79 /* Assets.xcassets */,
 				7D7D5F3D1C12537400ADBB79 /* Info.plist */,
 				7D7D5F291C12537400ADBB79 /* Supporting Files */,
+				7D7D5F851C15A01D00ADBB79 /* XTCommunication.h */,
+				7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */,
 			);
 			path = XTDiscountAsciiWarehouse;
 			sourceTree = "<group>";
@@ -214,8 +221,8 @@
 				7D7D5F7C1C159E7F00ADBB79 /* XTItem.m */,
 				7D7D5F7D1C159E7F00ADBB79 /* XTTag.h */,
 				7D7D5F7E1C159E7F00ADBB79 /* XTTag.m */,
-				7D7D5F651C15984500ADBB79 /* XTDAWCoreData.h */,
-				7D7D5F661C15984500ADBB79 /* XTDAWCoreData.m */,
+				7D7D5F651C15984500ADBB79 /* XTCoreData.h */,
+				7D7D5F661C15984500ADBB79 /* XTCoreData.m */,
 				7D7D5F351C12537400ADBB79 /* XTDiscountAsciiWarehouse.xcdatamodeld */,
 			);
 			path = CoreData;
@@ -548,10 +555,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D7D5F671C15984500ADBB79 /* XTDAWCoreData.m in Sources */,
+				7D7D5F671C15984500ADBB79 /* XTCoreData.m in Sources */,
 				7D7D5F311C12537400ADBB79 /* ViewController.m in Sources */,
 				7D7D5F801C159E7F00ADBB79 /* _XTTag.m in Sources */,
 				7D7D5F821C159E7F00ADBB79 /* XTTag.m in Sources */,
+				7D7D5F871C15A01D00ADBB79 /* XTCommunication.m in Sources */,
 				7D7D5F2E1C12537400ADBB79 /* AppDelegate.m in Sources */,
 				7D7D5F371C12537400ADBB79 /* XTDiscountAsciiWarehouse.xcdatamodeld in Sources */,
 				7D7D5F7F1C159E7F00ADBB79 /* _XTItem.m in Sources */,
@@ -564,6 +572,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D7D5F881C15A01D00ADBB79 /* XTCommunication.m in Sources */,
 				7D7D5F471C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -572,6 +581,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D7D5F891C15A01D00ADBB79 /* XTCommunication.m in Sources */,
 				7D7D5F521C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,5 @@
 //
-//  XTDAWCoreData.h
+//  XTCoreData.h
 //  XTDiscountAsciiWarehouse
 //
 //  Created by Joel Costa on 07/12/15.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@interface XTDAWCoreData : NSObject
+@interface XTCoreData : NSObject
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *privateManagedObjectContext;

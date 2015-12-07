@@ -7,7 +7,8 @@
 //
 
 #import "AppDelegate.h"
-#import "XTDAWCoreData.h"
+#import "XTCoreData.h"
+#import "XTCommunication.h"
 
 @interface AppDelegate ()
 
@@ -49,7 +50,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
-    [[XTDAWCoreData sharedInstance] saveContext];
+    [[XTCoreData sharedInstance] saveContext];
 }
 
 
