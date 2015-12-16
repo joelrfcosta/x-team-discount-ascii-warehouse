@@ -7,6 +7,19 @@
 
 @implementation XTItem
 
+- (void)setIdentifier:(NSString *)identifier {
+    [self willChangeValueForKey:@"identifier"];
+    [self setPrimitiveIdentifier:identifier];
+    
+    NSString *sortId = [[identifier componentsSeparatedByString:@"-"] objectAtIndex:0];
+    
+    if (sortId) {
+        [self setPrimitiveSortIdentifier:@(sortId.floatValue)];
+    }
+    
+    [self didChangeValueForKey:@"identifier"];
+}
+
 + (nonnull NSArray *)addItems:(nullable NSArray *)items managedObjectContext:(nullable NSManagedObjectContext *)context {
     NSMutableArray *itemsAdded = [NSMutableArray new];
     

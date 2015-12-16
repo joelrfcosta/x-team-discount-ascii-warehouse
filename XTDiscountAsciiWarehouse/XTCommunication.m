@@ -16,7 +16,7 @@ XTCommunicationSearchParameters const XTCommunicationSearchParametersNull = {nil
 BOOL XTCommunicationSearchParametersISNull(struct XTCommunicationSearchParameters p) {
     return (p.tags == nil && p.limit == 0 && p.skip == 0 && p.onlyInStock == false);
 }
-XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tags, int limit, int skip, BOOL onlyInStock) {
+XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tags, NSUInteger limit, NSUInteger skip, BOOL onlyInStock) {
     XTCommunicationSearchParameters p;
     
     p.limit = limit > 0 ? limit : 0;
@@ -27,7 +27,9 @@ XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tag
     return p;
 }
 
-@implementation XTCommunication
+@implementation XTCommunication {
+    AFHTTPRequestOperation *_fetchingOperation;
+}
 
 + (id)sharedInstance
 {
@@ -37,18 +39,23 @@ XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tag
 }
 
 - (AFHTTPRequestOperation *)fetchWithParameters:(struct XTCommunicationSearchParameters)parameters succeed:(void (^)(NSArray *items))succeed failed:(void (^)(NSError *error))failed {
+    
+    if (_fetchingOperation && !_fetchingOperation.finished) {
+        return _fetchingOperation;
+    }
+    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     
     NSMutableArray *queryParameters = [NSMutableArray new];
     if (!XTCommunicationSearchParametersISNull(parameters)) {
         if (parameters.limit > 0) {
-            [queryParameters addObject:[NSString stringWithFormat:@"limit=%d", parameters.limit]];
+            [queryParameters addObject:[NSString stringWithFormat:@"limit=%lu", (unsigned long)parameters.limit]];
         }
         if (parameters.tags.count > 0) {
             [queryParameters addObject:[NSString stringWithFormat:@"q=%@", [[parameters.tags componentsJoinedByString:@" "] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]]]];
         }
         if (parameters.skip > 0) {
-            [queryParameters addObject:[NSString stringWithFormat:@"skip=%d", parameters.skip]];
+            [queryParameters addObject:[NSString stringWithFormat:@"skip=%lul", (unsigned long)parameters.skip]];
         }
         if (parameters.onlyInStock) {
             [queryParameters addObject:[NSString stringWithFormat:@"onlyInStock=%d", parameters.onlyInStock]];
@@ -62,15 +69,17 @@ XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tag
         url = [NSURL URLWithString:XTCommunicationAPIEndPoint];
     }
     
-    DDLogDebug(@"%@", url);
+    DDLogDebug(@"Fetching data: %@", url);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"GET";
     
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    request.timeoutInterval = 10;
     
-    operation.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/x-json-stream", nil];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+    _fetchingOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    _fetchingOperation.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/x-json-stream", nil];
+    [_fetchingOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
         NSString *data = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSArray *items = [data componentsSeparatedByString:@"\n"];
         DDLogDebug(@"Response data\n%@", items);
@@ -83,9 +92,9 @@ XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tag
         }
     }];
     
-    [manager.operationQueue addOperation:operation];
+    [manager.operationQueue addOperation:_fetchingOperation];
     
-    return operation;
+    return _fetchingOperation;
 }
 
 @end

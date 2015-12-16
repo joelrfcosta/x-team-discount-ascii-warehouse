@@ -8,6 +8,7 @@ extern const struct XTItemAttributes {
 	__unsafe_unretained NSString *identifier;
 	__unsafe_unretained NSString *price;
 	__unsafe_unretained NSString *size;
+	__unsafe_unretained NSString *sortIdentifier;
 	__unsafe_unretained NSString *stock;
 	__unsafe_unretained NSString *type;
 } XTItemAttributes;
@@ -50,6 +51,14 @@ extern const struct XTItemRelationships {
 - (void)setSizeValue:(int16_t)value_;
 
 //- (BOOL)validateSize:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* sortIdentifier;
+
+@property (atomic) int16_t sortIdentifierValue;
+- (int16_t)sortIdentifierValue;
+- (void)setSortIdentifierValue:(int16_t)value_;
+
+//- (BOOL)validateSortIdentifier:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* stock;
 
@@ -96,6 +105,12 @@ extern const struct XTItemRelationships {
 
 - (int16_t)primitiveSizeValue;
 - (void)setPrimitiveSizeValue:(int16_t)value_;
+
+- (NSNumber*)primitiveSortIdentifier;
+- (void)setPrimitiveSortIdentifier:(NSNumber*)value;
+
+- (int16_t)primitiveSortIdentifierValue;
+- (void)setPrimitiveSortIdentifierValue:(int16_t)value_;
 
 - (NSNumber*)primitiveStock;
 - (void)setPrimitiveStock:(NSNumber*)value;

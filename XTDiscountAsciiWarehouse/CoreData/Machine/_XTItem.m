@@ -8,6 +8,7 @@ const struct XTItemAttributes XTItemAttributes = {
 	.identifier = @"identifier",
 	.price = @"price",
 	.size = @"size",
+	.sortIdentifier = @"sortIdentifier",
 	.stock = @"stock",
 	.type = @"type",
 };
@@ -49,6 +50,11 @@ const struct XTItemRelationships XTItemRelationships = {
 	}
 	if ([key isEqualToString:@"sizeValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"size"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"sortIdentifierValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"sortIdentifier"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -103,6 +109,26 @@ const struct XTItemRelationships XTItemRelationships = {
 
 - (void)setPrimitiveSizeValue:(int16_t)value_ {
 	[self setPrimitiveSize:@(value_)];
+}
+
+@dynamic sortIdentifier;
+
+- (int16_t)sortIdentifierValue {
+	NSNumber *result = [self sortIdentifier];
+	return [result shortValue];
+}
+
+- (void)setSortIdentifierValue:(int16_t)value_ {
+	[self setSortIdentifier:@(value_)];
+}
+
+- (int16_t)primitiveSortIdentifierValue {
+	NSNumber *result = [self primitiveSortIdentifier];
+	return [result shortValue];
+}
+
+- (void)setPrimitiveSortIdentifierValue:(int16_t)value_ {
+	[self setPrimitiveSortIdentifier:@(value_)];
 }
 
 @dynamic stock;

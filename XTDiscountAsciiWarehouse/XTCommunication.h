@@ -11,8 +11,8 @@
 
 typedef struct XTCommunicationSearchParameters {
     __unsafe_unretained NSArray *tags;
-    int limit;
-    int skip;
+    NSUInteger limit;
+    NSUInteger skip;
     BOOL onlyInStock;
 } XTCommunicationSearchParameters ;
 
@@ -20,7 +20,7 @@ FOUNDATION_EXPORT XTCommunicationSearchParameters const XTCommunicationSearchPar
 FOUNDATION_EXPORT NSString *const XTCommunicationAPIEndPoint;
 
 BOOL XTCommunicationSearchParametersISNull(struct XTCommunicationSearchParameters);
-XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tags, int limit, int skip, BOOL onlyInStock);
+XTCommunicationSearchParameters XTMakeCommunicationSearchParameters(NSArray *tags, NSUInteger limit, NSUInteger skip, BOOL onlyInStock);
 
 @interface XTCommunication : NSObject
 
