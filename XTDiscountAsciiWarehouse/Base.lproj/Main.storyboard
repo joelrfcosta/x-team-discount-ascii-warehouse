@@ -21,7 +21,7 @@
             </objects>
             <point key="canvasLocation" x="-749" y="336"/>
         </scene>
-        <!--Discount ascii warehouse-->
+        <!--Warehouse-->
         <scene sceneID="Reo-Bu-yhl">
             <objects>
                 <collectionViewController id="F2i-qd-w8a" customClass="XTCollectionViewController" sceneMemberID="viewController">
@@ -32,7 +32,7 @@
                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Xff-hx-8zP" customClass="XTCollectionViewLayout">
                             <size key="itemSize" width="255" height="209"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="100" height="50"/>
                             <inset key="sectionInset" minX="10" minY="10" maxX="10" maxY="10"/>
                         </collectionViewFlowLayout>
                         <cells>
@@ -49,7 +49,7 @@
                                                 <constraint firstAttribute="height" constant="40" id="S9b-Uh-I1C"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="Ab9-nP-LdO">
@@ -67,7 +67,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="255" height="119"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="48"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -123,13 +123,40 @@
                                 </connections>
                             </collectionViewCell>
                         </cells>
+                        <collectionReusableView key="sectionFooterView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FooterView" id="aMZ-RF-on9">
+                            <rect key="frame" x="275" y="0.0" width="100" height="536"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pull to load more" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CNL-m0-ZcM">
+                                    <rect key="frame" x="8" y="218" width="84" height="100"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="100" id="Kg2-pe-TKE"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="G5X-4q-2Ga">
+                                    <rect key="frame" x="40" y="318" width="20" height="20"/>
+                                    <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </activityIndicatorView>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="CNL-m0-ZcM" firstAttribute="leading" secondItem="aMZ-RF-on9" secondAttribute="leadingMargin" id="GBZ-vG-1gS"/>
+                                <constraint firstItem="G5X-4q-2Ga" firstAttribute="top" secondItem="CNL-m0-ZcM" secondAttribute="bottom" id="QpY-jj-i3d"/>
+                                <constraint firstAttribute="trailingMargin" secondItem="CNL-m0-ZcM" secondAttribute="trailing" id="dql-rT-c15"/>
+                                <constraint firstItem="G5X-4q-2Ga" firstAttribute="centerX" secondItem="aMZ-RF-on9" secondAttribute="centerX" id="n4v-Q1-Igl"/>
+                                <constraint firstItem="CNL-m0-ZcM" firstAttribute="centerY" secondItem="aMZ-RF-on9" secondAttribute="centerY" id="yoI-Uu-xBZ"/>
+                            </constraints>
+                        </collectionReusableView>
                         <connections>
                             <outlet property="dataSource" destination="F2i-qd-w8a" id="6vY-PG-g1G"/>
                             <outlet property="delegate" destination="F2i-qd-w8a" id="vhH-ln-MqQ"/>
                         </connections>
                     </collectionView>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Discount ascii warehouse" id="BCB-Ew-Pmu"/>
+                    <navigationItem key="navigationItem" title="Warehouse" id="BCB-Ew-Pmu"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tjr-ij-aDs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

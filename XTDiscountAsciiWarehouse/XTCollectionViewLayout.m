@@ -12,6 +12,7 @@
 
 @implementation XTCollectionViewLayout {
     NSMutableArray *_itemsAttributes;
+    NSMutableArray *_suplementaryItemsAttributes;
 }
 
 - (void)prepareLayout {
@@ -24,6 +25,7 @@
     NSArray *fetchedObjects = viewController.fetchedResultsController.fetchedObjects;
     
     _itemsAttributes = [NSMutableArray new];
+    _suplementaryItemsAttributes = [NSMutableArray new];
     
     CGFloat y = 0;
     int index = 0;
@@ -69,6 +71,10 @@
     _maxLineWidth = maxWidth;
     _minLineWidth = minWidth;
     
+    UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    attributes.frame = CGRectMake(  MAX(_maxLineWidth + 9 , self.collectionView.bounds.size.width - 1) , 0.0, 80.0, self.collectionView.frame.size.height);
+    [_suplementaryItemsAttributes addObject:attributes];
+    
     if ([self.delegate respondsToSelector:@selector(didFinishPrepareLayout:)]) {
         [self.delegate didFinishPrepareLayout:self];
     }
@@ -76,7 +82,7 @@
 
 - (CGSize)collectionViewContentSize
 {
-    return CGSizeMake( MAX(_maxLineWidth, self.collectionView.bounds.size.width), self.collectionView.bounds.size.height);
+    return CGSizeMake( MAX(_maxLineWidth + 10, self.collectionView.frame.size.width), self.collectionView.bounds.size.height);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
@@ -89,6 +95,12 @@
         }
     }
     
+    for (UICollectionViewLayoutAttributes *attributes in _suplementaryItemsAttributes) {
+        if (CGRectIntersectsRect(rect, attributes.frame)) {
+            [layoutAttributes addObject:attributes];
+        }
+    }
+    
     return layoutAttributes;
 }
 
@@ -96,5 +108,8 @@
     return [_itemsAttributes objectAtIndex:indexPath.row];
 }
 
+- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    return [_suplementaryItemsAttributes objectAtIndex:indexPath.row];
+}
 
 @end

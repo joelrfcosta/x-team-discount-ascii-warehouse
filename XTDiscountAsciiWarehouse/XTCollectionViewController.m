@@ -14,6 +14,11 @@
 
 @interface XTCollectionViewController () <NSFetchedResultsControllerDelegate, XTCollectionViewLayoutDelegate, UIScrollViewDelegate> {
     NSNumberFormatter *_priceFormatter;
+    NSMutableDictionary *_inserted;
+    NSMutableArray *_updated;
+    NSMutableArray *_deleted;
+    BOOL _onStockOnly;
+    UIBarButtonItem *_stockOnlyBarButton;
 }
 
 @end
@@ -28,27 +33,61 @@ static NSUInteger const fetchQuantity = 10;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Do any additional setup after loading the view.
-    
     _priceFormatter = [[NSNumberFormatter alloc] init];
     [_priceFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
     
     ((XTCollectionViewLayout *)self.collectionViewLayout).delegate = self;
     self.collectionView.delegate = self;
+    
+    _stockOnlyBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self action:@selector(didTouchStockOnlyButton)];
+    _stockOnlyBarButton.tintColor = [UIColor darkTextColor];
+    self.navigationItem.leftBarButtonItem = _stockOnlyBarButton;
+    
+    _onStockOnly = NO;
+    [self updateStockOnlyButton];
+    [self performFetch];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+}
+
+- (void)updateStockOnlyButton
+{
+    if (_onStockOnly) {
+        _stockOnlyBarButton.title = NSLocalizedString(@"View all items", @"On stock filter button title");
+    } else {
+        _stockOnlyBarButton.title = NSLocalizedString(@"View stock only", @"On stock filter button title");
+    }
+}
+
+- (void)refresh {
+    [self fetchRemoteDataSkip:0 onStockOnly:_onStockOnly];
+}
+
+- (void)didTouchStockOnlyButton {
+    _onStockOnly = !_onStockOnly;
+    [self updateStockOnlyButton];
+    [self performFetch];
+    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+}
+
+- (void)performFetch {
+    _fetchedResultsController = nil;
+    
+    NSError *error;
+    if ([self.fetchedResultsController performFetch:&error]) {
+        DDLogError(@"%@", error);
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self fetchRemoteData];
+    [self fetchRemoteDataSkip:self.fetchedResultsController.fetchedObjects.count onStockOnly:_onStockOnly];
     [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
 }
 
-- (void)fetchRemoteData {
-    [[XTCommunication sharedInstance] fetchWithParameters:XTMakeCommunicationSearchParameters(nil, fetchQuantity, self.fetchedResultsController.fetchedObjects.count, false) succeed:^(NSArray *items) {
+- (void)fetchRemoteDataSkip:(NSUInteger)skip onStockOnly:(BOOL)onStockOnly {
+    [[XTCommunication sharedInstance] fetchWithParameters:XTMakeCommunicationSearchParameters(nil, fetchQuantity, skip, onStockOnly) succeed:^(NSArray *items) {
         NSManagedObjectContext *context = [[XTCoreData sharedInstance] privateManagedObjectContext];
         [XTItem addItems:items managedObjectContext:context];
         [context save:nil];
@@ -73,6 +112,10 @@ static NSUInteger const fetchQuantity = 10;
     
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[XTItem entityName]];
     
+    if (_onStockOnly) {
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"stock > 0"];
+    }
+    
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sortIdentifier" ascending:YES];
     
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
@@ -86,22 +129,12 @@ static NSUInteger const fetchQuantity = 10;
     
     _fetchedResultsController.delegate = self;
     
-    NSError *error;
-    if ([_fetchedResultsController performFetch:&error]) {
-        DDLogError(@"%@", error);
-    }
-    
     return _fetchedResultsController;
-}
-
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [self.collectionView reloadData];
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
 }
-
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.fetchedResultsController.fetchedObjects.count;
@@ -112,6 +145,17 @@ static NSUInteger const fetchQuantity = 10;
     [cell configureCellWithItem:[self.fetchedResultsController objectAtIndexPath:indexPath]];
     
     return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionReusableView *reusableview = nil;
+    
+    if (kind == UICollectionElementKindSectionFooter) {
+        UICollectionReusableView *footerview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"FooterView" forIndexPath:indexPath];
+        
+        reusableview = footerview;
+    }
+    return reusableview;
 }
 
 - (CGFloat)itemsHeightForCollectionViewLayout:(XTCollectionViewLayout *)layout {
@@ -141,7 +185,7 @@ static NSUInteger const fetchQuantity = 10;
 
 - (void)didFinishPrepareLayout:(XTCollectionViewLayout *)layout {
     if (layout.minLineWidth < self.collectionView.frame.size.width) {
-        [self fetchRemoteData];
+    [self fetchRemoteDataSkip:self.fetchedResultsController.fetchedObjects.count onStockOnly:_onStockOnly];
     }
 }
 
@@ -154,53 +198,85 @@ static NSUInteger const fetchQuantity = 10;
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
+#pragma mark <NSFetchedResultsControllerDelegate>
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    _inserted = [NSMutableDictionary new];
+    _deleted = [NSMutableArray new];
+    _updated = [NSMutableArray new];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
+{
+    switch (type) {
+        case NSFetchedResultsChangeDelete:
+            [_deleted addObject:indexPath];
+            break;
+        case NSFetchedResultsChangeInsert:
+            [_inserted setObject:anObject forKey:newIndexPath];
+            break;
+        case NSFetchedResultsChangeMove:
+            [_updated addObject:indexPath];
+            [_updated addObject:newIndexPath];
+            break;
+        case NSFetchedResultsChangeUpdate:
+            [_updated addObject:indexPath];
+            break;
+    }
+}
+
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+
+        [self.collectionView performBatchUpdates:^{
+            [self.collectionView deleteItemsAtIndexPaths:_deleted];
+            
+            NSArray<NSIndexPath *>* keys = [_inserted.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSIndexPath *  _Nonnull obj1, NSIndexPath *  _Nonnull obj2) {
+                if (obj1.row > obj2.row) {
+                    return NSOrderedDescending;
+                } else if (obj1.row < obj2.row) {
+                    return NSOrderedAscending;
+                } else {
+                    return NSOrderedSame;
+                }
+            }];
+            
+            [keys enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [self.collectionView insertItemsAtIndexPaths:@[obj]];
+            }];
+            
+            [self.collectionView reloadItemsAtIndexPaths:_updated];
+            
+        } completion:nil];
+}
+
 #pragma mark <UIScrollViewDelegate>
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    if (!decelerate) {
-        [self scrollViewDidEndDecelerating:scrollView];
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.x + bounds.size.width - inset.right;
+    float h = size.width;
+    
+    float reload_distance = 100; //distance for which you want to load more
+    if(y > h + reload_distance) {
+        
+        scrollView.bounces = NO;
+        [UIView animateWithDuration:0.3 animations:^{
+            [scrollView setContentOffset:CGPointMake(size.width - scrollView.frame.size.width, 0) animated:NO];
+        } completion:^(BOOL finished) {
+            scrollView.bounces = YES;
+            
+            // To cancel the gesture
+            scrollView.panGestureRecognizer.enabled = NO;
+            scrollView.panGestureRecognizer.enabled = YES;
+            
+            [self fetchRemoteDataSkip:self.fetchedResultsController.fetchedObjects.count onStockOnly:_onStockOnly];
+        }];
     }
 }
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    float endEdge = scrollView.contentOffset.x + scrollView.frame.size.width;
-    if (endEdge >= scrollView.contentSize.width) {
-        [self fetchRemoteData];
-    }
-}
-
-
-#pragma mark <UICollectionViewDelegate>
-
-/*
-// Uncomment this method to specify if the specified item should be highlighted during tracking
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
-	return YES;
-}
-*/
-
-/*
-// Uncomment this method to specify if the specified item should be selected
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-*/
-
-/*
-// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
-	return NO;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	return NO;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	
-}
-*/
 
 @end

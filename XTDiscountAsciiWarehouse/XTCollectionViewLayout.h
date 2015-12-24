@@ -27,5 +27,9 @@
 @property (nonatomic) UIEdgeInsets *cellInset;
 @property (nonatomic) CGFloat maxLineWidth;
 @property (nonatomic) CGFloat minLineWidth;
+@property (nonatomic, strong) NSMutableArray *insertedIndexPaths;
+@property (nonatomic, strong) NSMutableArray *removedIndexPaths;
+@property (nonatomic, strong) NSMutableArray *insertedSectionIndices;
+@property (nonatomic, strong) NSMutableArray *removedSectionIndices;
 
 @end
