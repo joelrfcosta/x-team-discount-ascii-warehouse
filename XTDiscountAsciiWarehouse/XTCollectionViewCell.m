@@ -8,23 +8,45 @@
 
 #import "XTCollectionViewCell.h"
 
-@implementation XTCollectionViewCell
+
+@implementation XTCollectionViewCell {
+    NSNumberFormatter *_priceFormatter;
+}
+
+- (UIImage *)imageWithColor:(UIColor *)color {
+    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    self.buyNowButton.titleLabel.textAlignment = NSTextAlignmentCenter;    
+    self.buyNowButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [self.buyNowButton setBackgroundImage:[self imageWithColor:[UIColor redColor]] forState:UIControlStateHighlighted];    
+    
+    _priceFormatter = [NSNumberFormatter new];
+    _priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
 }
 
-- (void)configureCellWithItem:(XTItem *)item {
-    if (item) {
-        self.faceLabel.text = item.face;
-        self.priceLabel.text = [NSString stringWithFormat:@"%d", item.stockValue];// [_priceFormatter stringFromNumber:item.price];
+- (void)setItem:(XTItem *)item {
+    _item = item;
+    if (_item) {
+        self.faceLabel.text = _item.face;
+        self.priceLabel.text = [_priceFormatter stringFromNumber:item.price];
         
-        if (item.stockValue == 0) {
+        if (_item.stockValue == 0) {
             [self.buyNowButton setTitle:NSLocalizedString(@"Out of stock!", @"Buy button text when without items on stock") forState:UIControlStateNormal];
             self.buyNowButton.enabled = NO;
-        } else if (item.stockValue == 1) {
+        } else if (_item.stockValue == 1) {
             [self.buyNowButton setTitle:NSLocalizedString(@"BUY NOW!\n(Only 1 more on stock!)", @"Buy button text when only 1 item on stock") forState:UIControlStateNormal];
             self.buyNowButton.enabled = YES;
         } else {
@@ -38,5 +60,6 @@
         self.buyNowButton.enabled = NO;
     }
 }
+
 
 @end

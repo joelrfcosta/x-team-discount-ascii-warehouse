@@ -1,5 +1,6 @@
 #import "XTItem.h"
 #import "XTTag.h"
+#import "DDLog.h"
 
 @interface XTItem ()
 
@@ -20,7 +21,7 @@
     [self didChangeValueForKey:@"identifier"];
 }
 
-+ (nonnull NSArray *)addItems:(nullable NSArray *)items managedObjectContext:(nullable NSManagedObjectContext *)context {
++ (nonnull NSArray *)addItems:(nullable NSArray *)items managedObjectContext:(nonnull NSManagedObjectContext *)context {
     NSMutableArray *itemsAdded = [NSMutableArray new];
     
     [items enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -33,7 +34,7 @@
     return itemsAdded;
 }
 
-+ (nullable XTItem *)itemWithIdentifier:(nullable NSString *)identifier managedObjectContext:(nullable NSManagedObjectContext *)context {
++ (nullable XTItem *)itemWithIdentifier:(nullable NSString *)identifier managedObjectContext:(nonnull NSManagedObjectContext *)context {
     NSArray *fetchedObjects;
     NSFetchRequest *fetch = [NSFetchRequest new];
     
@@ -50,7 +51,24 @@
     return nil;
 }
 
-- (nullable XTItem *)initWithString:(nullable NSString *)string managedObjectContext:(nullable NSManagedObjectContext *)context {
++ (void)deleteAll:(nonnull NSManagedObjectContext *)context {
+    NSArray *fetchedObjects;
+    NSFetchRequest *fetch = [NSFetchRequest new];
+    
+    [fetch setEntity:[NSEntityDescription entityForName:@"XTItem" inManagedObjectContext:context]];
+    
+    NSError *error = nil;
+    fetchedObjects = [context executeFetchRequest:fetch error:&error];
+    if (error) {
+        DDLogDebug(@"%@", error);
+    } else if (fetchedObjects.count > 0) {
+        [fetchedObjects enumerateObjectsUsingBlock:^(XTItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [context deleteObject:obj];
+        }];
+    }
+}
+
+- (nullable XTItem *)initWithString:(nullable NSString *)string managedObjectContext:(nonnull NSManagedObjectContext *)context {
     if (!string || !string.length) {
         return nil;
     }
@@ -90,8 +108,6 @@
         DDLogError(@"%@\nData:\n%@", exception, data);
         return nil;
     }
-    
-    DDLogDebug(@"%@", self);
     
     return self;
 }

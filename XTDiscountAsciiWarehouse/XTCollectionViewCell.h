@@ -14,7 +14,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *faceLabel;
 @property (weak, nonatomic) IBOutlet UILabel *priceLabel;
 @property (weak, nonatomic) IBOutlet UIButton *buyNowButton;
-
-- (void)configureCellWithItem:(XTItem *)item;
+@property (nonatomic) XTItem *item;
 
 @end

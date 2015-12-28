@@ -10,6 +10,12 @@
 #import "XTCollectionViewController.h"
 #import "XTItem.h"
 
+typedef struct XTRowData {
+    int numElements;
+    double totalSize;
+    double offset;
+} XTRowData;
+
 @implementation XTCollectionViewLayout {
     NSMutableArray *_itemsAttributes;
     NSMutableArray *_suplementaryItemsAttributes;
@@ -31,31 +37,98 @@
     int index = 0;
     CGFloat height = [self.delegate itemsHeightForCollectionViewLayout:self];
     NSUInteger quantity = [self.delegate itemsQuantityPerColumnForCollectionViewLayout:self];
+    __block NSUInteger row = 0;
+    CGFloat contentHeight = self.collectionView.frame.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom;
+    
+    NSMutableArray *rowsData = [NSMutableArray new];
     
     for (XTItem *item in fetchedObjects) {
         
         NSIndexPath *indexPath = [viewController.fetchedResultsController indexPathForObject:item];
         CGFloat width = [self.delegate collectionViewLayout:self widthForItemAtIndexPath:indexPath];
 
+        CGRect frame;
         UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
         if (index >= quantity) {
             UICollectionViewLayoutAttributes *prevAttributes = [_itemsAttributes objectAtIndex:index-quantity];
             CGFloat x = prevAttributes.frame.origin.x + prevAttributes.frame.size.width;
-            attributes.frame = CGRectMake(x, y, width, height);
+            frame = CGRectMake(x, y, width, height);
         } else {
-            attributes.frame = CGRectMake(0, y, width, height);
+            frame = CGRectMake(0, y, width, height);
         }
+        attributes.frame = frame;
         attributes.size = CGSizeMake(width - 20, height - 10);
         [_itemsAttributes addObject:attributes];
         
         y += height;
         
-        if (y >= self.collectionView.frame.size.height) {
+        if (y >= contentHeight) {
             y = 0;
+        }
+        
+        XTRowData data;
+        data.numElements = 0;
+        data.offset = 0;
+        data.totalSize = 0;
+        
+        if (rowsData.count == quantity) {
+            [rowsData[row] getValue:&data];
+        }
+        
+        data.numElements += 1;
+        data.totalSize += width;
+        data.offset = data.totalSize / (double)data.numElements;
+        
+        if (rowsData.count < quantity) {
+            [rowsData addObject:[NSValue valueWithBytes:&data objCType:@encode(XTRowData)]];
+        } else {
+            [rowsData replaceObjectAtIndex:row withObject:[NSValue valueWithBytes:&data objCType:@encode(XTRowData)]];
+        }
+        
+        if (row == quantity - 1) {
+            row = 0;
+        } else {
+            row++;
         }
         
         index += 1;
     }
+    
+    __block XTRowData maxRowData;
+    maxRowData.totalSize = 0;
+    [rowsData enumerateObjectsUsingBlock:^(NSValue *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        XTRowData data;
+        [obj getValue:&data];
+        if (maxRowData.totalSize < data.totalSize) {
+            maxRowData = data;
+        }
+    }];
+    
+    row = 0;
+    __block NSUInteger column = 0;
+    
+    [_itemsAttributes enumerateObjectsUsingBlock:^(UICollectionViewLayoutAttributes * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        XTRowData data;
+        [rowsData[row] getValue:&data];
+        
+        if (data.totalSize != maxRowData.totalSize) {
+            double offset = (maxRowData.totalSize - data.totalSize) / (double)data.numElements;
+            CGRect frame = obj.frame;
+            
+            frame.size.width += offset;
+            frame.origin.x += (double)column * offset;
+            
+            obj.frame = frame;
+        }
+        
+        if (row == quantity - 1) {
+            row = 0;
+            column++;
+        } else {
+            row++;
+        }
+    }];
+    
     
     CGFloat maxWidth = CGFLOAT_MIN;
     CGFloat minWidth = CGFLOAT_MAX;
@@ -72,7 +145,7 @@
     _minLineWidth = minWidth;
     
     UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    attributes.frame = CGRectMake(  MAX(_maxLineWidth + 9 , self.collectionView.bounds.size.width - 1) , 0.0, 80.0, self.collectionView.frame.size.height);
+    attributes.frame = CGRectMake(  MAX(_maxLineWidth + 9 , self.collectionView.bounds.size.width - 1) , 0.0, 100.0, contentHeight);
     [_suplementaryItemsAttributes addObject:attributes];
     
     if ([self.delegate respondsToSelector:@selector(didFinishPrepareLayout:)]) {
@@ -82,7 +155,7 @@
 
 - (CGSize)collectionViewContentSize
 {
-    return CGSizeMake( MAX(_maxLineWidth + 10, self.collectionView.frame.size.width), self.collectionView.bounds.size.height);
+    return CGSizeMake( MAX(_maxLineWidth + 10, self.collectionView.frame.size.width), self.collectionView.bounds.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect

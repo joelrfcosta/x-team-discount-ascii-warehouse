@@ -28,6 +28,9 @@
 		7D7D5F8C1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F8B1C1600E900ADBB79 /* XTCollectionViewController.m */; };
 		7D7D5F8D1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F8B1C1600E900ADBB79 /* XTCollectionViewController.m */; };
 		7D7D5F8E1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7D5F8B1C1600E900ADBB79 /* XTCollectionViewController.m */; };
+		7D9CFC2D1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D9CFC2C1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m */; };
+		7D9CFC2E1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D9CFC2C1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m */; };
+		7D9CFC2F1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D9CFC2C1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m */; };
 		7DB8D2491C18496B000A083D /* XTCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB8D2481C18496B000A083D /* XTCollectionViewCell.m */; };
 		7DB8D24A1C18496B000A083D /* XTCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB8D2481C18496B000A083D /* XTCollectionViewCell.m */; };
 		7DB8D24B1C18496B000A083D /* XTCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB8D2481C18496B000A083D /* XTCollectionViewCell.m */; };
@@ -90,6 +93,8 @@
 		7D7D5F861C15A01D00ADBB79 /* XTCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTCommunication.m; sourceTree = "<group>"; };
 		7D7D5F8A1C1600E900ADBB79 /* XTCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTCollectionViewController.h; sourceTree = "<group>"; };
 		7D7D5F8B1C1600E900ADBB79 /* XTCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTCollectionViewController.m; sourceTree = "<group>"; };
+		7D9CFC2B1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTLoadMoreCollectionReusableView.h; sourceTree = "<group>"; };
+		7D9CFC2C1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTLoadMoreCollectionReusableView.m; sourceTree = "<group>"; };
 		7DB8D2471C18496B000A083D /* XTCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTCollectionViewCell.h; sourceTree = "<group>"; };
 		7DB8D2481C18496B000A083D /* XTCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTCollectionViewCell.m; sourceTree = "<group>"; };
 		7DB8D24C1C19F3E2000A083D /* XTCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTCollectionViewLayout.h; sourceTree = "<group>"; };
@@ -259,6 +264,8 @@
 				7DB8D2481C18496B000A083D /* XTCollectionViewCell.m */,
 				7DB8D24C1C19F3E2000A083D /* XTCollectionViewLayout.h */,
 				7DB8D24D1C19F3E2000A083D /* XTCollectionViewLayout.m */,
+				7D9CFC2B1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.h */,
+				7D9CFC2C1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m */,
 			);
 			name = CollectionView;
 			sourceTree = "<group>";
@@ -351,6 +358,7 @@
 				TargetAttributes = {
 					7D7D5F251C12537400ADBB79 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = TPKT2JGT8L;
 					};
 					7D7D5F411C12537400ADBB79 = {
 						CreatedOnToolsVersion = 7.1.1;
@@ -589,6 +597,7 @@
 				7D7D5F7F1C159E7F00ADBB79 /* _XTItem.m in Sources */,
 				7DB8D24E1C19F3E2000A083D /* XTCollectionViewLayout.m in Sources */,
 				7D7D5F811C159E7F00ADBB79 /* XTItem.m in Sources */,
+				7D9CFC2D1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */,
 				7D7D5F2B1C12537400ADBB79 /* main.m in Sources */,
 				7D7D5F8C1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */,
 			);
@@ -602,6 +611,7 @@
 				7D7D5F8D1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */,
 				7D7D5F881C15A01D00ADBB79 /* XTCommunication.m in Sources */,
 				7DB8D24F1C19F3E2000A083D /* XTCollectionViewLayout.m in Sources */,
+				7D9CFC2E1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */,
 				7D7D5F471C12537400ADBB79 /* XTDiscountAsciiWarehouseTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -614,6 +624,7 @@
 				7D7D5F8E1C1600E900ADBB79 /* XTCollectionViewController.m in Sources */,
 				7D7D5F891C15A01D00ADBB79 /* XTCommunication.m in Sources */,
 				7DB8D2501C19F3E2000A083D /* XTCollectionViewLayout.m in Sources */,
+				7D9CFC2F1C31664A0041B9E7 /* XTLoadMoreCollectionReusableView.m in Sources */,
 				7D7D5F521C12537400ADBB79 /* XTDiscountAsciiWarehouseUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -740,11 +751,12 @@
 			baseConfigurationReference = A5FCFE7B97D4C59BB6876AAB /* Pods-XTDiscountAsciiWarehouse.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PREFIX_HEADER = XTDiscountAsciiWarehouse/Prefix.pch;
 				INFOPLIST_FILE = XTDiscountAsciiWarehouse/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.xteam.XTDiscountAsciiWarehouse;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sadcoat.xtdiscountasciiwarehouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -754,11 +766,12 @@
 			baseConfigurationReference = 07F9C22E6EA91A972C5EFD36 /* Pods-XTDiscountAsciiWarehouse.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PREFIX_HEADER = XTDiscountAsciiWarehouse/Prefix.pch;
 				INFOPLIST_FILE = XTDiscountAsciiWarehouse/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.xteam.XTDiscountAsciiWarehouse;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sadcoat.xtdiscountasciiwarehouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
