@@ -35,6 +35,9 @@
     
     _priceFormatter = [NSNumberFormatter new];
     _priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+    _priceFormatter.maximumFractionDigits = 0;
+    
+    self.background.layer.cornerRadius = 5.0;
 }
 
 - (void)setItem:(XTItem *)item {

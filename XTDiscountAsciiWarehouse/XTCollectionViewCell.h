@@ -15,5 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *priceLabel;
 @property (weak, nonatomic) IBOutlet UIButton *buyNowButton;
 @property (nonatomic) XTItem *item;
+@property (weak, nonatomic) IBOutlet UIView *background;
 
 @end

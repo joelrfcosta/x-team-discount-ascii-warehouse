@@ -13,7 +13,6 @@
 @protocol XTCollectionViewLayoutDelegate <NSObject>
 
 - (CGFloat) collectionViewLayout:(XTCollectionViewLayout *)layout widthForItemAtIndexPath:(NSIndexPath *)indexPath;
-- (CGFloat) itemsHeightForCollectionViewLayout:(XTCollectionViewLayout *)layout;
 - (NSUInteger) itemsQuantityPerColumnForCollectionViewLayout:(XTCollectionViewLayout *)layout;
 
 @optional

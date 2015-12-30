@@ -61,17 +61,25 @@ static NSUInteger const fetchQuantity = 10;
 - (void)setLoading:(BOOL)loading {
     _loading = loading;
     
+    UIEdgeInsets inset = self.collectionView.contentInset;
+    
     if (_loading) {
         _footerview.loadingMoreStatus = XTLoadMoreCollectionReusableViewLoadingStatusAfterTrigger;
         self.resetBarButton.enabled = NO;
         self.refreshBarButton.enabled = NO;
+        
+        inset.right += 100;
     } else {
         _loading = NO;
         _loadMore = NO;
         _footerview.loadingMoreStatus = XTLoadMoreCollectionReusableViewLoadingStatusIddle;
         self.resetBarButton.enabled = YES;
         self.refreshBarButton.enabled = YES;
+        inset.right -= 100;
     }
+    [UIView animateWithDuration:0.3 animations:^{
+        self.collectionView.contentInset = inset;
+    }];
 }
 
 #pragma mark Actions
@@ -126,7 +134,8 @@ static NSUInteger const fetchQuantity = 10;
     self.loading = NO;
     
     _priceFormatter = [[NSNumberFormatter alloc] init];
-    [_priceFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+    _priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+    _priceFormatter.maximumFractionDigits = 0;
     
     ((XTCollectionViewLayout *)self.collectionViewLayout).delegate = self;
     self.collectionView.delegate = self;
@@ -142,24 +151,50 @@ static NSUInteger const fetchQuantity = 10;
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
     
-    self.collectionView.contentInset = UIEdgeInsetsMake(_searchBar.frame.size.height, 0, 0, 0);
+    self.collectionView.contentInset = UIEdgeInsetsMake(_searchBar.frame.size.height + 5, 5, 5, 5);
 }
 
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"contentInset"])
+    {
+        UIEdgeInsets new = ((NSValue *)[change valueForKey:@"new"]).UIEdgeInsetsValue;
+        UIEdgeInsets old = ((NSValue *)[change valueForKey:@"old"]).UIEdgeInsetsValue;
+        
+        if (new.bottom != old.bottom) {
+            [self.collectionView performBatchUpdates:^{
+                [self.collectionViewLayout invalidateLayout];
+            } completion:nil];
+        }
+    }
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    [self.collectionView addObserver:self forKeyPath:@"contentInset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:NULL];
+    
     [self fetchRemoteDataSkip:self.fetchedResultsController.fetchedObjects.count onStockOnly:_onStockOnly quantity:fetchQuantity];
     [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [self.collectionView removeObserver:self forKeyPath:@"contentInset"];
+}
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
+    [_searchBar resignFirstResponder];
+    
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
         [self.collectionViewLayout invalidateLayout];
-    } completion:nil];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+    }];
     
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    //[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 #pragma mark Communication
@@ -183,6 +218,24 @@ static NSUInteger const fetchQuantity = 10;
             self.loading = NO;
         }];
         if (!operation) {
+            NSArray *items =
+            @[
+              @"{\"type\":\"face\",\"id\":\"0-4itmqrfkz6e9izfr\",\"size\":24,\"price\":379,\"face\":\"( .-. )\",\"stock\":7,\"tags\":[\"flat\",\"bored\"]}",
+              @"{\"type\":\"face\",\"id\":\"1-vw21ngfdtn50o1or\",\"size\":19,\"price\":487,\"face\":\"( .o.)\",\"stock\":0,\"tags\":[\"suprised\",\"consectetur\"]}",
+              @"{\"type\":\"face\",\"id\":\"2-243b4x4c3o6flxr\",\"size\":34,\"price\":501,\"face\":\"( `·´ )\",\"stock\":7,\"tags\":[\"angry\",\"cross\",\"elit\"]}",
+              @"{\"type\":\"face\",\"id\":\"3-4xmmi1l37ukjfw29\",\"size\":15,\"price\":282,\"face\":\"( ° ͜ ʖ °)\",\"stock\":2,\"tags\":[\"happy\",\"nose\"]}",
+              @"{\"type\":\"face\",\"id\":\"4-dv5v1dfy2ljcq5mi\",\"size\":32,\"price\":50,\"face\":\"( ͡° ͜ʖ ͡°)\",\"stock\":5,\"tags\":[\"happy\",\"nose\",\"sit\",\"consectetur\",\"sit\"]}",
+              @"{\"type\":\"face\",\"id\":\"5-v2efv45eyeklnmi\",\"size\":22,\"price\":959,\"face\":\"( ⚆ _ ⚆ )\",\"stock\":6,\"tags\":[]}",
+              @"{\"type\":\"face\",\"id\":\"6-si4bj477ntye3ik9\",\"size\":25,\"price\":931,\"face\":\"( ︶︿︶)\",\"stock\":6,\"tags\":[]}",
+              @"{\"type\":\"face\",\"id\":\"7-alepfznr5p7j5rk9\",\"size\":28,\"price\":90,\"face\":\"( ﾟヮﾟ)\",\"stock\":1,\"tags\":[\"amet\"]}",
+              @"{\"type\":\"face\",\"id\":\"8-wcayxmh1zf2sm7vi\",\"size\":35,\"price\":702,\"face\":\"(\\/)(°,,,°)(\\/)\",\"stock\":5,\"tags\":[\"zoidberg\",\"amet\"]}",
+              @"{\"type\":\"face\",\"id\":\"9-8so9m5z5fai9hpvi\",\"size\":21,\"price\":868,\"face\":\"(¬_¬)\",\"stock\":2,\"tags\":[\"consectetur\",\"sit\",\"lorem\"]}"
+              ];
+            
+            NSManagedObjectContext *context = [[XTCoreData sharedInstance] privateManagedObjectContext];
+            [XTItem addItems:items managedObjectContext:context];
+            [context save:nil];
+            
             self.loading = NO;
         }
     }
@@ -266,23 +319,14 @@ static NSUInteger const fetchQuantity = 10;
     return reusableview;
 }
 
-- (CGFloat)itemsHeightForCollectionViewLayout:(XTCollectionViewLayout *)layout {
-    CGFloat itemsQuantity = [self itemsQuantityPerColumnForCollectionViewLayout:layout];
-    return ((self.collectionView.frame.size.height - _searchBar.frame.size.height) / itemsQuantity);
-}
-
 - (NSUInteger)itemsQuantityPerColumnForCollectionViewLayout:(XTCollectionViewLayout *)layout {
-    if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        return 4;
-    } else {
-        if (self.collectionView.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
-            return 2;
-        } else {
-            return 3;
-        }
+    CGFloat minHeight = 130;
+    NSUInteger quantity = floorf((self.collectionView.frame.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom) / minHeight);
+    if (quantity <= 0) {
+        return 1;
     }
-    
-    return 0;
+    return quantity;
+
 }
 
 - (CGFloat)collectionViewLayout:(XTCollectionViewLayout *)layout widthForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -306,10 +350,11 @@ static NSUInteger const fetchQuantity = 10;
     
     NSNumberFormatter *formatter = [NSNumberFormatter new];
     formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+    formatter.maximumFractionDigits = 0;
     
     UIAlertController *controller =
     [UIAlertController alertControllerWithTitle:nil
-                                        message:[NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to buy %@ for %@?", @"Buying confirmation"), item.face, [formatter stringFromNumber:item.price]]
+                                        message:[NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to buy\n%@\nfor %@?", @"Buying confirmation"), item.face, [formatter stringFromNumber:item.price]]
                                  preferredStyle:UIAlertControllerStyleAlert];
     
     [controller addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", @"Confirmation option while buying") style:UIAlertActionStyleDestructive handler:nil]];
@@ -415,4 +460,5 @@ static NSUInteger const fetchQuantity = 10;
     self.searchParams = [[_searchBar.text.lowercaseString stringByReplacingOccurrencesOfString:@"," withString:@" "] componentsSeparatedByString:@" "];
     [_searchBar resignFirstResponder];
 }
+
 @end

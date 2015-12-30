@@ -20,6 +20,12 @@
 - (void)setLoadingMoreStatus:(XTLoadMoreCollectionReusableViewLoadingStatus)loadingMoreStatus {
     _loadingMoreStatus = loadingMoreStatus;
     
+    CATransition *animation = [CATransition animation];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    animation.type = kCATransitionFade;
+    animation.duration = 0.3;
+    [self.layer addAnimation:animation forKey:@"kCATransitionFade"];
+    
     switch (_loadingMoreStatus) {
         case XTLoadMoreCollectionReusableViewLoadingStatusIddle:
             self.titleLabel.text = NSLocalizedString(@"Pull to load more", @"Load more text before trigger offset");
@@ -30,7 +36,7 @@
             [self.activityIndicator stopAnimating];
             break;
         case XTLoadMoreCollectionReusableViewLoadingStatusAfterTrigger:
-            self.titleLabel.text = NSLocalizedString(@"Please wait...", @"Load more text after trigger offset");
+            self.titleLabel.text = NSLocalizedString(@"Please wait...\n", @"Load more text after trigger offset");
             [self.activityIndicator startAnimating];
             break;
     }

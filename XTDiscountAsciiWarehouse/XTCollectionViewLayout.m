@@ -13,7 +13,6 @@
 typedef struct XTRowData {
     int numElements;
     double totalSize;
-    double offset;
 } XTRowData;
 
 @implementation XTCollectionViewLayout {
@@ -33,16 +32,20 @@ typedef struct XTRowData {
     _itemsAttributes = [NSMutableArray new];
     _suplementaryItemsAttributes = [NSMutableArray new];
     
-    CGFloat y = 0;
-    int index = 0;
-    CGFloat height = [self.delegate itemsHeightForCollectionViewLayout:self];
-    NSUInteger quantity = [self.delegate itemsQuantityPerColumnForCollectionViewLayout:self];
-    __block NSUInteger row = 0;
     CGFloat contentHeight = self.collectionView.frame.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom;
+    NSUInteger quantity = [self.delegate itemsQuantityPerColumnForCollectionViewLayout:self];
+    if (quantity <= 0) {
+        return;
+    }
+    CGFloat height = contentHeight / (CGFloat)quantity;
     
+    __block CGFloat y = 0;
+    __block int index = 0;
+    __block NSUInteger row = 0;
+    __block NSUInteger column = 0;
     NSMutableArray *rowsData = [NSMutableArray new];
     
-    for (XTItem *item in fetchedObjects) {
+    [fetchedObjects enumerateObjectsUsingBlock:^(XTItem *  _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
         
         NSIndexPath *indexPath = [viewController.fetchedResultsController indexPathForObject:item];
         CGFloat width = [self.delegate collectionViewLayout:self widthForItemAtIndexPath:indexPath];
@@ -57,7 +60,6 @@ typedef struct XTRowData {
             frame = CGRectMake(0, y, width, height);
         }
         attributes.frame = frame;
-        attributes.size = CGSizeMake(width - 20, height - 10);
         [_itemsAttributes addObject:attributes];
         
         y += height;
@@ -68,7 +70,6 @@ typedef struct XTRowData {
         
         XTRowData data;
         data.numElements = 0;
-        data.offset = 0;
         data.totalSize = 0;
         
         if (rowsData.count == quantity) {
@@ -77,7 +78,6 @@ typedef struct XTRowData {
         
         data.numElements += 1;
         data.totalSize += width;
-        data.offset = data.totalSize / (double)data.numElements;
         
         if (rowsData.count < quantity) {
             [rowsData addObject:[NSValue valueWithBytes:&data objCType:@encode(XTRowData)]];
@@ -92,7 +92,7 @@ typedef struct XTRowData {
         }
         
         index += 1;
-    }
+    }];
     
     __block XTRowData maxRowData;
     maxRowData.totalSize = 0;
@@ -105,7 +105,6 @@ typedef struct XTRowData {
     }];
     
     row = 0;
-    __block NSUInteger column = 0;
     
     [_itemsAttributes enumerateObjectsUsingBlock:^(UICollectionViewLayoutAttributes * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         XTRowData data;
@@ -145,7 +144,7 @@ typedef struct XTRowData {
     _minLineWidth = minWidth;
     
     UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    attributes.frame = CGRectMake(  MAX(_maxLineWidth + 9 , self.collectionView.bounds.size.width - 1) , 0.0, 100.0, contentHeight);
+    attributes.frame = CGRectMake(  MAX(_maxLineWidth , self.collectionView.bounds.size.width - 1) , 0.0, 100.0, contentHeight);
     [_suplementaryItemsAttributes addObject:attributes];
     
     if ([self.delegate respondsToSelector:@selector(didFinishPrepareLayout:)]) {
@@ -155,7 +154,7 @@ typedef struct XTRowData {
 
 - (CGSize)collectionViewContentSize
 {
-    return CGSizeMake( MAX(_maxLineWidth + 10, self.collectionView.frame.size.width), self.collectionView.bounds.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom);
+    return CGSizeMake( MAX(_maxLineWidth + 1, self.collectionView.frame.size.width), self.collectionView.bounds.size.height - self.collectionView.contentInset.top - self.collectionView.contentInset.bottom);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
@@ -178,10 +177,16 @@ typedef struct XTRowData {
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row >= _itemsAttributes.count) {
+        return nil;
+    }
     return [_itemsAttributes objectAtIndex:indexPath.row];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row >= _suplementaryItemsAttributes.count) {
+        return nil;
+    }
     return [_suplementaryItemsAttributes objectAtIndex:indexPath.row];
 }
 
