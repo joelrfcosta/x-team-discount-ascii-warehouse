@@ -217,25 +217,7 @@ static NSUInteger const fetchQuantity = 10;
             DDLogError(@"%@", error);
             self.loading = NO;
         }];
-        if (!operation) {
-            NSArray *items =
-            @[
-              @"{\"type\":\"face\",\"id\":\"0-4itmqrfkz6e9izfr\",\"size\":24,\"price\":379,\"face\":\"( .-. )\",\"stock\":7,\"tags\":[\"flat\",\"bored\"]}",
-              @"{\"type\":\"face\",\"id\":\"1-vw21ngfdtn50o1or\",\"size\":19,\"price\":487,\"face\":\"( .o.)\",\"stock\":0,\"tags\":[\"suprised\",\"consectetur\"]}",
-              @"{\"type\":\"face\",\"id\":\"2-243b4x4c3o6flxr\",\"size\":34,\"price\":501,\"face\":\"( `·´ )\",\"stock\":7,\"tags\":[\"angry\",\"cross\",\"elit\"]}",
-              @"{\"type\":\"face\",\"id\":\"3-4xmmi1l37ukjfw29\",\"size\":15,\"price\":282,\"face\":\"( ° ͜ ʖ °)\",\"stock\":2,\"tags\":[\"happy\",\"nose\"]}",
-              @"{\"type\":\"face\",\"id\":\"4-dv5v1dfy2ljcq5mi\",\"size\":32,\"price\":50,\"face\":\"( ͡° ͜ʖ ͡°)\",\"stock\":5,\"tags\":[\"happy\",\"nose\",\"sit\",\"consectetur\",\"sit\"]}",
-              @"{\"type\":\"face\",\"id\":\"5-v2efv45eyeklnmi\",\"size\":22,\"price\":959,\"face\":\"( ⚆ _ ⚆ )\",\"stock\":6,\"tags\":[]}",
-              @"{\"type\":\"face\",\"id\":\"6-si4bj477ntye3ik9\",\"size\":25,\"price\":931,\"face\":\"( ︶︿︶)\",\"stock\":6,\"tags\":[]}",
-              @"{\"type\":\"face\",\"id\":\"7-alepfznr5p7j5rk9\",\"size\":28,\"price\":90,\"face\":\"( ﾟヮﾟ)\",\"stock\":1,\"tags\":[\"amet\"]}",
-              @"{\"type\":\"face\",\"id\":\"8-wcayxmh1zf2sm7vi\",\"size\":35,\"price\":702,\"face\":\"(\\/)(°,,,°)(\\/)\",\"stock\":5,\"tags\":[\"zoidberg\",\"amet\"]}",
-              @"{\"type\":\"face\",\"id\":\"9-8so9m5z5fai9hpvi\",\"size\":21,\"price\":868,\"face\":\"(¬_¬)\",\"stock\":2,\"tags\":[\"consectetur\",\"sit\",\"lorem\"]}"
-              ];
-            
-            NSManagedObjectContext *context = [[XTCoreData sharedInstance] privateManagedObjectContext];
-            [XTItem addItems:items managedObjectContext:context];
-            [context save:nil];
-            
+        if (!operation) {            
             self.loading = NO;
         }
     }
