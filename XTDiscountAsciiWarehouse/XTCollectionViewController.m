@@ -23,6 +23,8 @@
     BOOL _loadMore;
     BOOL _dragging;
     UISearchBar *_searchBar;
+    NSDate *_oldestRefreshDate;
+    NSUserDefaults *_prefs;
 }
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *stockOnlyToolbarButton;
@@ -36,8 +38,11 @@
 
 @implementation XTCollectionViewController
 
-static NSString * const reuseIdentifier = @"Cell";
+static NSString * const oldestRefreshDateKey = @"XTOldestRefreshDate";
+static NSString * const cellReuseIdentifier = @"Cell";
+static NSString * const footerReuseIdentifier = @"FooterView";
 static NSUInteger const fetchQuantity = 10;
+static NSTimeInterval const cacheTimeout = 60*60;
 
 @synthesize fetchedResultsController = _fetchedResultsController;
 
@@ -84,6 +89,24 @@ static NSUInteger const fetchQuantity = 10;
 
 #pragma mark Actions
 
+- (void)resetData {
+    _searchBar.text = nil;
+    _searchParams = nil;
+    self.onStockOnly = NO;
+    
+    NSManagedObjectContext *context = [[XTCoreData sharedInstance] privateManagedObjectContext];
+    [XTItem deleteAll:context];
+    [XTTag deleteAll:context];
+    
+    NSError *error;
+    [context save:&error];
+    if (error) {
+        DDLogDebug(@"%@", error);
+    }
+    
+    [self fetchRemoteDataSkip:0 onStockOnly:_onStockOnly quantity:fetchQuantity];
+}
+
 - (IBAction)didTouchRefreshButton:(id)sender {
     [_searchBar resignFirstResponder];
     [self fetchRemoteDataSkip:0 onStockOnly:_onStockOnly quantity:self.fetchedResultsController.fetchedObjects.count];
@@ -98,22 +121,7 @@ static NSUInteger const fetchQuantity = 10;
                                  preferredStyle:UIAlertControllerStyleAlert];
     
     [controller addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", @"Confirmation option while resetting data") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        _searchBar.text = nil;
-        _searchParams = nil;
-        self.onStockOnly = NO;
-        
-        NSManagedObjectContext *context = [[XTCoreData sharedInstance] privateManagedObjectContext];
-        [XTItem deleteAll:context];
-        [XTTag deleteAll:context];
-        
-        NSError *error;
-        [context save:&error];
-        if (error) {
-            DDLogDebug(@"%@", error);
-        }
-        
-        [self fetchRemoteDataSkip:0 onStockOnly:_onStockOnly quantity:fetchQuantity];
-        
+        [self resetData];
     }]];
     [controller addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"No", @"Cancel option while resetting data") style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:controller animated:YES completion:nil];
@@ -129,6 +137,9 @@ static NSUInteger const fetchQuantity = 10;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _prefs = [NSUserDefaults standardUserDefaults];
+    _oldestRefreshDate = [_prefs objectForKey:oldestRefreshDateKey];
     
     _dragging = NO;
     self.loading = NO;
@@ -154,8 +165,12 @@ static NSUInteger const fetchQuantity = 10;
     self.collectionView.contentInset = UIEdgeInsetsMake(_searchBar.frame.size.height + 5, 5, 5, 5);
 }
 
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+
+    /**
+     * This is necessary to be able to update collection view layout when keyboard is shown or hidden
+     **/
     if ([keyPath isEqualToString:@"contentInset"])
     {
         UIEdgeInsets new = ((NSValue *)[change valueForKey:@"new"]).UIEdgeInsetsValue;
@@ -194,7 +209,7 @@ static NSUInteger const fetchQuantity = 10;
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
     }];
     
-    //[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 #pragma mark Communication
@@ -202,6 +217,16 @@ static NSUInteger const fetchQuantity = 10;
 - (void)fetchRemoteDataSkip:(NSUInteger)skip onStockOnly:(BOOL)onStockOnly quantity:(NSUInteger)quantity {
     if (!_loading) {
         self.loading = YES;
+        
+        /**
+         *  Reset data if cache timed out
+         */
+        if ([[_oldestRefreshDate dateByAddingTimeInterval:cacheTimeout] compare:[NSDate date]] == NSOrderedAscending) {
+            [self resetData];
+            quantity = fetchQuantity;
+            skip = 0;
+            _oldestRefreshDate = nil;
+        }
         
         if (quantity <= 0) {
             quantity = fetchQuantity;
@@ -213,11 +238,21 @@ static NSUInteger const fetchQuantity = 10;
             [XTItem addItems:items managedObjectContext:context];
             [context save:nil];
             self.loading = NO;
+            
+            if (!_oldestRefreshDate) {
+                _oldestRefreshDate = [NSDate date];
+                
+                /**
+                 *  Save refresh date to user defaults to be able to be retreived if the app is killed
+                 */
+                [_prefs setObject:_oldestRefreshDate forKey:oldestRefreshDateKey];
+                [_prefs synchronize];
+            }
         } failed:^(NSError *error) {
             DDLogError(@"%@", error);
             self.loading = NO;
         }];
-        if (!operation) {            
+        if (!operation) {
             self.loading = NO;
         }
     }
@@ -281,7 +316,7 @@ static NSUInteger const fetchQuantity = 10;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    XTCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    XTCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellReuseIdentifier forIndexPath:indexPath];
     cell.item = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     cell.buyNowButton.tag = indexPath.row;
@@ -294,7 +329,7 @@ static NSUInteger const fetchQuantity = 10;
     UICollectionReusableView *reusableview = nil;
     
     if (kind == UICollectionElementKindSectionFooter) {
-        _footerview = (XTLoadMoreCollectionReusableView *)[collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"FooterView" forIndexPath:indexPath];
+        _footerview = (XTLoadMoreCollectionReusableView *)[collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:footerReuseIdentifier forIndexPath:indexPath];
         
         reusableview = _footerview;
     }
@@ -412,7 +447,11 @@ static NSUInteger const fetchQuantity = 10;
         float y = offset.x + bounds.size.width - inset.right;
         float h = size.width;
         
-        float reload_distance = 100; //distance to trigger load more action
+        /**
+         *  distance to trigger load more action
+         */
+        float reload_distance = 100;
+        
         if(y > h + reload_distance) {
             _footerview.loadingMoreStatus = XTLoadMoreCollectionReusableViewLoadingStatusBeforeTrigger;
             _loadMore = YES;
